@@ -41,7 +41,30 @@ document.getElementById("transfer").onclick = function() {
     .then(response => {
       return response.json();
     })
-    .then(data => {
-      console.log(data);
+    .then(function(tmptx) {
+      let bitcoin = require("bitcoinjs-lib");
+      let bigi = require("bigi");
+      let buffer = require("buffer");
+      let keys = new bitcoin.ECPair(
+        bigi.fromHex(document.getElementById("privateKey"))
+      );
+      tmptx.pubkeys = [];
+      tmptx.signatures = tmptx.tosign.map(function(tosign, n) {
+        tmptx.pubkeys.push(keys.getPublicKeyBuffer().toString("hex"));
+        return keys
+          .sign(new buffer.Buffer(tosign, "hex"))
+          .toDER()
+          .toString("hex");
+      });
+      fetch("https://api.blockcypher.com/v1/btc/test3/txs/send", {
+        method: "post",
+        body: JSON.stringify(newtx)
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          console.log(data);
+        });
     });
 };
