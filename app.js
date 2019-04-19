@@ -33,7 +33,7 @@ document.getElementById("transfer").onclick = function() {
     inputs: [{ addresses: [from] }],
     outputs: [{ addresses: [to], value: v }]
   };
-  console.log(newtx);
+  console.log(JSON.stringify(newtx));
   fetch("https://api.blockcypher.com/v1/btc/test3/txs/new", {
     method: "post",
     body: JSON.stringify(newtx)
@@ -42,29 +42,33 @@ document.getElementById("transfer").onclick = function() {
       return response.json();
     })
     .then(function(tmptx) {
-      let bitcoin = require("bitcoinjs-lib");
-      let bigi = require("bigi");
-      let buffer = require("buffer");
-      let keys = new bitcoin.ECPair(
-        bigi.fromHex(document.getElementById("privateKey"))
+      let eccrypto = require("eccrypto");
+      let privateKey = Buffer.from(
+        document.getElementById("privateKey").value,
+        "hex"
       );
+      let publicKey = eccrypto.getPublic(privateKey).toString("hex");
       tmptx.pubkeys = [];
-      tmptx.signatures = tmptx.tosign.map(function(tosign, n) {
-        tmptx.pubkeys.push(keys.getPublicKeyBuffer().toString("hex"));
-        return keys
-          .sign(new buffer.Buffer(tosign, "hex"))
-          .toDER()
-          .toString("hex");
-      });
-      fetch("https://api.blockcypher.com/v1/btc/test3/txs/send", {
-        method: "post",
-        body: JSON.stringify(newtx)
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          console.log(data);
+      let promises = tmptx.tosign.map(toSign => {
+        tmptx.pubkeys.push(publicKey);
+        let buf = Buffer.from(toSign, "hex");
+        return eccrypto.sign(privateKey, buf).then(function(sig) {
+          return sig.toString("hex");
         });
+      });
+      Promise.all(promises).then(result => {
+        tmptx.signatures = result;
+        console.log("tmptx " + JSON.stringify(tmptx));
+        fetch("https://api.blockcypher.com/v1/btc/test3/txs/send", {
+          method: "post",
+          body: JSON.stringify(tmptx)
+        })
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            console.log("final " + JSON.stringify(data));
+          });
+      });
     });
 };
