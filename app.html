@@ -19,9 +19,7 @@
     </div>
     <div class="container">
       <div class="border-bottom">
-        <label for="basic-url" class="font-weight-bold"
-          >Please enter a bitcoin testnet address:
-        </label>
+        <label for="basic-url" class="font-weight-bold">Check Balance: </label>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon3"
@@ -38,12 +36,15 @@
             Search
           </button>
         </div>
-        <p id="showBalance">Account Balance:</p>
-        <p id="showUnconfirmedBalance">Unconfirmed Balance:</p>
-        <p id="showFinalBalance">Final Balance:</p>
+        <div style="display: none" id="info">
+          <p id="showBalance">Account Balance:</p>
+          <p id="showUnconfirmedBalance">Unconfirmed Balance:</p>
+          <p id="showFinalBalance">Final Balance:</p>
+          <canvas id="myChart" width="400" height="200"></canvas>
+        </div>
       </div>
       <div class="form-group mt-3">
-        <label class="font-weight-bold">Please enter your address: </label>
+        <label class="font-weight-bold">Transfer Bitcoin: </label>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon3">From</span>
@@ -55,7 +56,6 @@
             aria-describedby="basic-addon3"
           />
         </div>
-        <label class="font-weight-bold">Please enter transfer address: </label>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon3">To</span>
@@ -67,10 +67,9 @@
             aria-describedby="basic-addon3"
           />
         </div>
-        <label class="font-weight-bold">Please enter a private key: </label>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
-            <span class="input-group-text" id="basic-addon3">Key</span>
+            <span class="input-group-text" id="basic-addon3">Private Key</span>
           </div>
           <input
             type="text"
@@ -79,10 +78,6 @@
             aria-describedby="basic-addon3"
           />
         </div>
-
-        <label class="font-weight-bold"
-          >Please enter the amount you want to transfer:
-        </label>
         <div class="input-group mb-3 w-25">
           <div class="input-group-prepend">
             <span class="input-group-text">฿</span>
