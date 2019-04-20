@@ -81,12 +81,18 @@ document.getElementById("transfer").onclick = function() {
           body: JSON.stringify(tmptx)
         })
           .then(response => {
+            if (!response.ok) {
+              throw Error(response.statusText);
+            }
             return response.json();
           })
           .then(data => {
             document.getElementById(
               "message"
             ).innerHTML = `Transfer Successful!`;
+          })
+          .catch(function(error) {
+            alert(error + ", make sure to enter the corrrect input.");
           });
       });
     })
