@@ -5,6 +5,10 @@ document.getElementById("search").onclick = function() {
   let api = `https://api.blockcypher.com/v1/btc/test3/addrs/${userInput}/balance`;
   fetch(api)
     .then(response => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      console.log(response);
       return response.json();
     })
     .then(data => {
@@ -21,6 +25,9 @@ document.getElementById("search").onclick = function() {
       document.getElementById(
         "showFinalBalance"
       ).innerHTML = `Final Balance ฿${finalBalance}`;
+    })
+    .catch(function(error) {
+      alert("Cannot find this address, please check again.");
     });
 };
 
@@ -39,6 +46,9 @@ document.getElementById("transfer").onclick = function() {
     body: JSON.stringify(newtx)
   })
     .then(response => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
       return response.json();
     })
     .then(function(tmptx) {
@@ -67,8 +77,13 @@ document.getElementById("transfer").onclick = function() {
             return response.json();
           })
           .then(data => {
-            console.log("final " + JSON.stringify(data));
+            document.getElementById(
+              "message"
+            ).innerHTML = `Transfer Successful!`;
           });
       });
+    })
+    .catch(function(error) {
+      alert(error + ", make sure to enter the corrrect input.");
     });
 };
